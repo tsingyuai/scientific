@@ -38,19 +38,7 @@ cd /Users/springleaf/study/collaborator/clawdbot/extensions/scientify
 - 功能变更：更新相关章节
 - 已知限制：更新 "Known Limitations" 章节
 
-### 3. 更新版本号
-
-编辑 `package.json`：
-```json
-"version": "x.y.z"
-```
-
-版本规则：
-- `patch` (x.y.Z): bug 修复、文档更新
-- `minor` (x.Y.0): 新功能、新 tool、新 skill
-- `major` (X.0.0): 破坏性变更
-
-### 4. 构建验证
+### 3. 构建验证
 
 ```bash
 npm run build
@@ -58,43 +46,49 @@ npm run build
 
 确保无 TypeScript 错误。
 
-### 5. 提交代码
+### 4. 提交代码（重要：commit message 决定版本号）
 
 ```bash
 git add -A
-git commit -m "feat/fix/docs: 描述变更
+git commit -m "type: 描述变更
 
 详细说明（可选）
 
 Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
 ```
 
-### 6. 推送到 GitHub
+**Commit 类型与版本号对应：**
+| Commit 类型 | 版本变化 | 示例 |
+|------------|---------|------|
+| `fix:` | patch (1.1.0 → 1.1.1) | `fix: correct arxiv date parsing` |
+| `feat:` | minor (1.1.0 → 1.2.0) | `feat: add semantic_scholar tool` |
+| `feat!:` 或 `BREAKING CHANGE:` | major (1.1.0 → 2.0.0) | `feat!: change workspace structure` |
+| `docs:` | patch | `docs: update README` |
+| `refactor:` | patch | `refactor: simplify command handler` |
+| `perf:` | patch | `perf: optimize arxiv batch download` |
+| `chore:` | 不发布 | `chore: update dev dependencies` |
+
+### 5. 推送到 GitHub（自动发布）
 
 ```bash
 git push origin main
 ```
 
-### 7. 发布到 npm
+**CI 自动执行：**
+1. 分析 commit messages
+2. 计算新版本号
+3. 更新 package.json
+4. 生成 CHANGELOG.md
+5. 发布到 npm
+6. 创建 GitHub Release
 
-**方式 A - 手动发布：**
-```bash
-npm publish --access public
-```
-
-**方式 B - 通过 tag 触发 CI：**
-```bash
-git tag v1.x.x
-git push origin v1.x.x
-```
-
-CI 会自动构建并发布到 npm。
-
-### 8. 验证发布
+### 6. 验证发布
 
 ```bash
 npm view scientify versions
 ```
+
+或查看 GitHub Actions 运行状态。
 
 ## 文件结构
 
@@ -126,8 +120,9 @@ scientify/
 │   │       ├── workspace-spec.md
 │   │       └── prompts/{implement,plan,review,survey}.md
 │   └── install-scientify/SKILL.md
+├── .releaserc.json          # semantic-release 配置
 └── .github/
-    └── workflows/publish.yml  # CI/CD 配置
+    └── workflows/release.yml  # 自动发布 CI/CD
 ```
 
 ## 常见任务
@@ -183,11 +178,11 @@ research-pipeline skill 中的代码执行依赖用户环境配置。
 
 ### 发布检查清单
 
-- [ ] 版本号已更新
-- [ ] 构建无错误
+- [ ] 构建无错误 (`npm run build`)
 - [ ] README 已更新（如有新功能）
-- [ ] 提交信息规范
-- [ ] npm publish 成功
+- [ ] Commit message 使用正确的类型前缀
+- [ ] 推送后检查 GitHub Actions 状态
+- [ ] 验证 npm 版本 (`npm view scientify versions`)
 
 ## 相关资源
 
