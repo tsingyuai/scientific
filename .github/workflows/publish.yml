@@ -1,14 +1,12 @@
 name: Publish to npm
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '*.md'
-      - '.github/**'
+  # 只在创建 release 或推送 tag 时发布
   release:
     types: [published]
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   publish:
