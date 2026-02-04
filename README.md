@@ -28,9 +28,12 @@
 | `/project-switch <id>` | Switch project |
 | `/project-delete <id>` | Delete project |
 
-### Tool
+### Tools
 
-- **arxiv** - Search arXiv.org API with keyword search, date filtering, automatic .tex download
+| Tool | Description |
+|------|-------------|
+| **arxiv_search** | Search arXiv.org API with keyword search, date filtering, automatic .tex download |
+| **github_search** | Search GitHub repositories by keyword, filter by language, sort by stars/updated |
 
 ---
 
@@ -231,6 +234,28 @@ Agent: [Reading selected_idea.md and related papers]
   }
 }
 ```
+
+---
+
+## Known Limitations
+
+### Sandbox & GPU
+
+The `research-pipeline` skill's code execution step depends on your OpenClaw agent configuration:
+
+- If `sandbox.mode: "off"` (default for CLI), commands run directly on host
+- Current sandbox does NOT support GPU (`--gpus`) or custom shared memory (`--shm-size`)
+
+For GPU-accelerated ML training, consider:
+1. Running outside sandbox (configure agent with `sandbox.mode: "off"`)
+2. Using a dedicated cloud GPU instance
+3. Waiting for OpenClaw GPU support
+
+---
+
+## Development
+
+See [CLAUDE.md](./CLAUDE.md) for version update SOP and contribution guide.
 
 ---
 

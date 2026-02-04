@@ -28,9 +28,12 @@
 | `/project-switch <id>` | 切换项目 |
 | `/project-delete <id>` | 删除项目 |
 
-### Tool
+### Tools
 
-- **arxiv** - 搜索 arXiv API，支持关键词搜索、日期过滤、自动下载 .tex 源文件
+| Tool | 描述 |
+|------|------|
+| **arxiv_search** | 搜索 arXiv API，支持关键词搜索、日期过滤、自动下载 .tex 源文件 |
+| **github_search** | 搜索 GitHub 仓库，支持关键词、语言过滤、按 stars/更新时间排序 |
 
 ---
 
@@ -232,6 +235,28 @@ Agent: [读取 selected_idea.md 和相关论文]
   }
 }
 ```
+
+---
+
+## 已知限制
+
+### Sandbox 与 GPU
+
+`research-pipeline` skill 的代码执行步骤取决于你的 OpenClaw agent 配置：
+
+- 如果 `sandbox.mode: "off"`（CLI 默认），命令直接在主机执行
+- 当前 sandbox **不支持** GPU（`--gpus`）和自定义共享内存（`--shm-size`）
+
+对于需要 GPU 加速的 ML 训练：
+1. 在 sandbox 外运行（配置 agent `sandbox.mode: "off"`）
+2. 使用云 GPU 实例
+3. 等待 OpenClaw 添加 GPU 支持
+
+---
+
+## 开发
+
+参见 [CLAUDE.md](./CLAUDE.md) 了解版本更新流程和贡献指南。
 
 ---
 
