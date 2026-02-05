@@ -1,6 +1,6 @@
 ---
 name: write-review-paper
-description: "Write a literature review or survey paper from EXISTING papers. Guides through reading, note-taking, synthesis, and structured writing. Use after /literature-survey has collected papers."
+description: "Write literature review or survey paper from EXISTING papers. Guides reading strategy, note-taking, synthesis, and academic writing. Use for: writing thesis lit review, standalone survey papers, synthesizing findings. NOT for: searching new papers (use /literature-survey), generating research ideas (use /idea-generation)."
 metadata:
   {
     "openclaw":
@@ -13,18 +13,6 @@ metadata:
 # Literature Review Writing
 
 Guide for writing a structured literature review or survey paper from papers you've already collected. This skill helps with reading strategy, note organization, and academic writing.
-
-**Use this skill when:**
-- You have collected papers (via `/literature-survey` or manually)
-- Need to write a literature review section for a thesis/paper
-- Writing a standalone survey paper
-- Synthesizing findings across multiple papers
-
-**NOT for:**
-- Searching and discovering new papers (use `/literature-survey`)
-- Generating research ideas (use `/idea-generation`)
-
----
 
 ## Prerequisites
 
@@ -70,62 +58,7 @@ Create `$WORKSPACE/review/reading_plan.md`:
 
 ### 1.2 Reading Notes Template
 
-For each paper, create `$WORKSPACE/review/notes/{paper_id}.md`:
-
-```markdown
-# [Paper Title]
-
-**ID**: [arxiv_id / DOI]
-**Authors**: [author list]
-**Year**: [year]
-**Venue**: [conference/journal]
-**Priority**: P1/P2/P3
-
-## One-sentence Summary
-[用一句话概括这篇论文的核心贡献]
-
-## Problem & Motivation
-- 研究什么问题？
-- 为什么重要？
-- 现有方法的不足？
-
-## Method
-### Core Idea
-[核心创新点]
-
-### Technical Approach
-[关键技术细节]
-
-### Key Equations
-```latex
-[重要公式]
-```
-
-## Experiments
-- **Datasets**: [使用的数据集]
-- **Baselines**: [对比方法]
-- **Metrics**: [评价指标]
-- **Key Results**: [主要结论]
-
-## Strengths
-1. [优点1]
-2. [优点2]
-
-## Limitations
-1. [局限1]
-2. [局限2]
-
-## Connections
-- 与 [paper_x] 的关系：[描述]
-- 改进了 [method_y]：[如何改进]
-- 被 [paper_z] 引用/扩展：[描述]
-
-## Quotes for Citation
-> "[重要原文]" (Section X, Page Y)
-
-## My Comments
-[你的思考、疑问、可能的改进方向]
-```
+For each paper, create `$WORKSPACE/review/notes/{paper_id}.md` using template in `references/note-template.md`.
 
 ---
 
@@ -203,126 +136,19 @@ Create `$WORKSPACE/review/taxonomy.md`:
 
 ### 3.1 Survey Paper Template
 
-Create `$WORKSPACE/review/draft.md`:
+Create `$WORKSPACE/review/draft.md` using template in `references/survey-template.md`.
 
-```markdown
-# [Survey Title]: A Comprehensive Review
-
-## Abstract
-[Background - 1 sentence]
-[Problem - 1 sentence]
-[What this survey covers - 2 sentences]
-[Key findings - 2 sentences]
-[Conclusion - 1 sentence]
-
-## 1. Introduction
-
-### 1.1 Background and Motivation
-[为什么这个领域重要？]
-[当前研究的热度和趋势]
-
-### 1.2 Scope of This Survey
-[本综述覆盖的范围]
-[与已有综述的区别]
-
-### 1.3 Contributions
-本文的主要贡献：
-1. [贡献1]
-2. [贡献2]
-3. [贡献3]
-
-### 1.4 Organization
-本文结构如下：
-- Section 2: [内容]
-- Section 3: [内容]
-- ...
-
-## 2. Background and Preliminaries
-
-### 2.1 Problem Definition
-[正式定义研究问题]
-
-### 2.2 Key Concepts
-[核心概念解释]
-
-### 2.3 Evaluation Metrics
-[常用评价指标]
-
-## 3. Taxonomy of Methods
-
-### 3.1 Category A: [Name]
-
-#### 3.1.1 Subcategory A.1
-[方法描述]
-[代表性工作]
-
-#### 3.1.2 Subcategory A.2
-...
-
-### 3.2 Category B: [Name]
-...
-
-## 4. Comparative Analysis
-
-### 4.1 Quantitative Comparison
-[对比表格]
-[结果分析]
-
-### 4.2 Qualitative Comparison
-[方法特点对比]
-[适用场景分析]
-
-## 5. Datasets and Benchmarks
-
-### 5.1 Public Datasets
-| Dataset | Size | Source | Features |
-|---------|------|--------|----------|
-| ... | ... | ... | ... |
-
-### 5.2 Benchmark Protocols
-[常用的实验设置]
-
-## 6. Challenges and Future Directions
-
-### 6.1 Open Challenges
-1. **Challenge 1**: [描述]
-2. **Challenge 2**: [描述]
-
-### 6.2 Emerging Trends
-1. **Trend 1**: [描述]
-2. **Trend 2**: [描述]
-
-### 6.3 Recommended Research Directions
-1. [方向1]
-2. [方向2]
-
-## 7. Conclusion
-[总结主要发现]
-[对领域的展望]
-
-## References
-[BibTeX entries]
-```
+Key sections: Abstract → Introduction → Background → Taxonomy → Comparison → Datasets → Future Directions → Conclusion
 
 ### 3.2 Thesis Literature Review Template
 
-For a thesis chapter, use this structure:
-
+For a thesis chapter:
 ```markdown
 # Chapter 2: Literature Review
-
 ## 2.1 Introduction
-[本章目标和结构]
-
 ## 2.2 [Topic Area 1]
-[相关工作综述]
-
 ## 2.3 [Topic Area 2]
-[相关工作综述]
-
 ## 2.4 Summary and Research Gaps
-[总结现有工作的不足]
-[引出你的研究问题]
 ```
 
 ---

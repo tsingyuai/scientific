@@ -1,217 +1,82 @@
 # Idea Template
 
-Use this template for each idea in `~/.openclaw/workspace/ideas/`.
+Use this template for each generated idea (`$WORKSPACE/ideas/idea_N.md`).
 
----
+## Required Sections
 
-# Idea N: [Short Descriptive Title]
+```markdown
+# Idea N: [Title]
 
-## One-Line Summary
-
-[A single sentence that captures the core innovation. Should be understandable without context.]
-
----
+## One-line Summary
+[Single sentence describing the core innovation]
 
 ## Challenges Addressed
+1. [Challenge 1]
+2. [Challenge 2]
 
-What problems in the current research landscape does this idea solve?
+## Existing Methods & Limitations
 
-- **[Challenge 1]**: [Brief description of the technical limitation]
-- **[Challenge 2]**: [Brief description of unsolved problem]
-- **[Challenge 3]**: [Brief description of key bottleneck]
+### Method A [arXiv:XXXX.XXXXX]
+- **Approach**: [Brief description]
+- **Limitation**: [Why insufficient]
 
----
-
-## Existing Methods & Their Limitations
-
-| Method | Paper/Source | Strength | Weakness This Idea Addresses |
-|--------|--------------|----------|------------------------------|
-| [Method A] | [Citation] | [What it does well] | [Limitation] |
-| [Method B] | [Citation] | [What it does well] | [Limitation] |
-| [Method C] | [Citation] | [What it does well] | [Limitation] |
-
----
+### Method B [arXiv:XXXX.XXXXX]
+- **Approach**: [Brief description]
+- **Limitation**: [Why insufficient]
 
 ## Motivation
-
-### Why is this problem important?
-
-[Explain the significance of solving this problem. Who benefits? What applications are enabled?]
-
-### What gap does this fill?
-
-[Describe the specific research gap this idea addresses. Reference the limitations above.]
-
-### Potential impact
-
-[Quantify if possible: "Could improve X metric by Y%" or "Enables new application Z"]
-
----
+[Why this gap matters, what opportunity exists]
 
 ## Proposed Method
 
-### Core Insight
-
-[2-3 sentences describing the key innovation. What is the "aha" moment?]
+### Core Idea
+[Main innovation in 2-3 sentences]
 
 ### Technical Approach
+[Detailed description]
 
-**Overview:**
+### Key Equations
+$$
+\mathcal{L} = ...
+$$
 
-[1 paragraph high-level description]
-
-**Step-by-step methodology:**
-
-1. **[Step 1 Name]**: [Description]
-   - Input: [what this step takes]
-   - Output: [what this step produces]
-   - Key operation: [main computation]
-
-2. **[Step 2 Name]**: [Description]
-   - Input: ...
-   - Output: ...
-   - Key operation: ...
-
-3. **[Step 3 Name]**: [Description]
-   - ...
-
-### Mathematical Formulation
-
-**Problem Setup:**
-
-Let $X \in \mathbb{R}^{n \times d}$ denote [description]...
-
-**Core Equations:**
-
-```latex
-% Main loss function
-\mathcal{L} = \mathcal{L}_{task} + \lambda \mathcal{L}_{reg}
-
-% Where task loss is:
-\mathcal{L}_{task} = ...
-
-% And regularization term is:
-\mathcal{L}_{reg} = ...
-```
-
-**Key derivations (if applicable):**
-
-[Show important mathematical steps that justify the approach]
-
-### Architecture / Algorithm
-
-```
-Algorithm: [Name]
-Input: [inputs]
-Output: [outputs]
-
-1. Initialize [parameters]
-2. For each [iteration]:
-   a. Compute [something]
-   b. Update [something]
-3. Return [result]
-```
-
-Or for neural architectures:
-
-```
-[Input] → [Layer 1] → [Layer 2] → ... → [Output]
-         (dim: ...)   (dim: ...)         (dim: ...)
-```
-
----
+## How This Improves on Cited Papers
+| Paper | Their Limitation | Our Improvement |
+|-------|------------------|-----------------|
+| [A]   | ...              | ...             |
+| [B]   | ...              | ...             |
 
 ## Expected Advantages
-
-Why should this approach work better than existing methods?
-
-- **[Advantage 1]**: [Explanation with reasoning]
-- **[Advantage 2]**: [Explanation with reasoning]
-- **[Advantage 3]**: [Explanation with reasoning]
-
-**Theoretical justification (if applicable):**
-
-[Brief argument for why this should work]
-
----
-
-## Potential Challenges
-
-What could go wrong? How to mitigate?
-
-| Challenge | Risk Level | Mitigation Strategy |
-|-----------|------------|---------------------|
-| [Challenge 1] | High/Med/Low | [How to address] |
-| [Challenge 2] | High/Med/Low | [How to address] |
-| [Challenge 3] | High/Med/Low | [How to address] |
-
----
+1. [Advantage 1]
+2. [Advantage 2]
 
 ## Evaluation Plan
 
 ### Datasets
-
-| Dataset | Task | Size | Why Chosen |
-|---------|------|------|------------|
-| [Dataset 1] | [Task] | [Size] | [Reason] |
-| [Dataset 2] | [Task] | [Size] | [Reason] |
+- [Dataset 1]: [Why chosen]
 
 ### Baselines
-
-| Method | Paper | Why Compare |
-|--------|-------|-------------|
-| [Baseline 1] | [Citation] | [Reason] |
-| [Baseline 2] | [Citation] | [Reason] |
+- [Method from Paper A]
+- [Method from Paper B]
 
 ### Metrics
+- [Metric 1]: [What it measures]
 
-| Metric | Description | Expected Improvement |
-|--------|-------------|---------------------|
-| [Metric 1] | [What it measures] | [X% over baseline] |
-| [Metric 2] | [What it measures] | [Y% over baseline] |
+## Scores (1-5)
+- **Novelty**: X/5 - [Justification]
+- **Feasibility**: X/5 - [Justification]
+- **Impact**: X/5 - [Justification]
+- **Total**: XX/15
+```
 
-### Ablation Studies
+## Idea Strategies
 
-What components to ablate to understand contribution?
+Generate 5 ideas using different strategies:
 
-1. [Component 1]: Remove/replace to test [hypothesis]
-2. [Component 2]: Remove/replace to test [hypothesis]
-
----
-
-## Scores
-
-| Criterion | Score (1-5) | Justification |
-|-----------|-------------|---------------|
-| **Novelty** | [X] | [Why this score] |
-| **Feasibility** | [X] | [Why this score] |
-| **Impact** | [X] | [Why this score] |
-| **Total** | [Sum] | |
-
----
-
-## Implementation Notes
-
-### Recommended Libraries
-
-- [Library 1]: For [purpose]
-- [Library 2]: For [purpose]
-
-### Reference Code
-
-- [Repo 1](URL): [What to reference]
-- [Repo 2](URL): [What to reference]
-
-### Estimated Effort
-
-- Model implementation: [X days]
-- Data pipeline: [X days]
-- Training & evaluation: [X days]
-- Total: [X days]
-
----
-
-## Related Ideas
-
-- **Idea [M]**: [How it relates - could be combined? alternative approach?]
-- **Future extension**: [What could come next after this idea]
+| Idea | Strategy | Description |
+|------|----------|-------------|
+| 1 | Combination | Merge techniques from 2+ papers |
+| 2 | Simplification | Simplify complex method |
+| 3 | Generalization | Extend to new domain/task |
+| 4 | Constraint Relaxation | Remove limiting assumption |
+| 5 | Architecture Innovation | Novel model design |

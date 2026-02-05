@@ -1,6 +1,6 @@
 ---
 name: research-pipeline
-description: "End-to-end research automation: from idea to code implementation with literature review, planning, and iterative refinement. Use arxiv, github_search, and exec tools."
+description: "End-to-end research automation: idea → literature → plan → implement → review → iterate. Use for: implementing a specific research idea, full ML research workflow. NOT for: just exploring literature (use /literature-survey), just generating ideas (use /idea-generation), just writing review (use /write-review-paper)."
 metadata:
   {
     "openclaw":

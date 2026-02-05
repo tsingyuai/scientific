@@ -1,6 +1,6 @@
 ---
 name: literature-survey
-description: "Comprehensive literature survey for a research domain. Automatically searches, filters, clusters, and iterates to discover relevant papers. Use for: exploring a new research area, collecting papers for a topic, building a literature database."
+description: "Comprehensive literature survey (100+ papers). Searches, filters, clusters, and iterates for complete coverage. Use for: exploring new research areas, collecting papers systematically, building literature databases. NOT for: summarizing papers you have (use /write-review-paper), finding a specific paper (use arxiv_search), generating ideas (use /idea-generation)."
 metadata:
   {
     "openclaw":
@@ -13,19 +13,6 @@ metadata:
 # Literature Survey
 
 Comprehensive literature discovery workflow for a research domain. This skill searches broadly, filters by relevance, clusters by direction, and iterates to ensure complete coverage.
-
-**Use this skill when:**
-- Exploring a new research area
-- Collecting all relevant papers for a topic
-- Building a comprehensive literature database
-- Need to understand the landscape of a field
-
-**NOT for:**
-- Summarizing papers you already have (use `/literature-review`)
-- Finding a specific paper (use `arxiv_search` directly)
-- Generating research ideas (use `/idea-generation`)
-
----
 
 ## Architecture: Isolated Sub-agent
 

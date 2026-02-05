@@ -1,6 +1,6 @@
 ---
 name: idea-generation
-description: "Generate innovative research ideas from a topic. SEARCHES arXiv/GitHub automatically, downloads papers, analyzes literature, and outputs 5 novel research ideas with arXiv citations. Use for: 找研究方向, 生成创新点, find research gaps, propose new methods. NOT for summarizing existing papers (use literature-review instead)."
+description: "Generate innovative research ideas from a topic. SEARCHES arXiv/GitHub automatically, downloads papers, analyzes literature, outputs 5 novel ideas with citations. Use for: 找研究方向, 生成创新点, find research gaps, propose new methods. NOT for: summarizing papers (use /write-review-paper), literature survey (use /literature-survey)."
 metadata:
   {
     "openclaw":
@@ -93,67 +93,14 @@ End-to-end workflow for generating innovative research ideas from a research top
 
 ## Step 0: Auto Project Management (REQUIRED)
 
-**Agent autonomously manages projects. DO NOT ask user for confirmation.**
+**Autonomous - DO NOT ask user for confirmation.**
 
-### 0.1 Extract Topic from User Query
+1. Extract topic from user query → convert to kebab-case ID
+2. Check `~/.openclaw/workspace/projects/` for existing match
+3. Use existing or create new: `mkdir -p $PROJECT_ID/{papers,repos,ideas}`
+4. Update `.active` file and set `$WORKSPACE` path
 
-Analyze the user's message to identify the research topic. Examples:
-- "帮我调研文本摘要方法" → topic: `text-summarization`
-- "推荐系统的深度学习方法" → topic: `rec-deep-learning`
-- "transformer attention optimization" → topic: `transformer-attention`
-
-Convert to kebab-case ID: lowercase, spaces/special chars → hyphens.
-
-### 0.2 Check Existing Projects
-
-```bash
-ls ~/.openclaw/workspace/projects/ 2>/dev/null | grep -v "^\.active$"
-```
-
-Read each `project.json` to check if topic matches:
-```bash
-cat ~/.openclaw/workspace/projects/*/project.json 2>/dev/null
-```
-
-### 0.3 Select or Create Project
-
-**If matching project exists**: Use it, update `.active`
-```bash
-echo "{project_id}" > ~/.openclaw/workspace/projects/.active
-```
-
-**If no match**: Create new project
-```bash
-PROJECT_ID="{topic-as-kebab-case}"
-mkdir -p ~/.openclaw/workspace/projects/$PROJECT_ID/{papers,repos,ideas}
-echo "$PROJECT_ID" > ~/.openclaw/workspace/projects/.active
-
-# Create project.json
-cat > ~/.openclaw/workspace/projects/$PROJECT_ID/project.json << 'EOF'
-{
-  "id": "{project_id}",
-  "name": "{Human readable name}",
-  "created": "{ISO date}",
-  "topics": ["{keyword1}", "{keyword2}"]
-}
-EOF
-```
-
-### 0.4 Set Working Paths
-
-After project selection, ALL subsequent paths use:
-```
-WORKSPACE=~/.openclaw/workspace/projects/{project_id}
-$WORKSPACE/task.json
-$WORKSPACE/search_results.md
-$WORKSPACE/papers/
-$WORKSPACE/repos/
-$WORKSPACE/ideas/
-$WORKSPACE/prepare_res.md
-```
-
-**Log project selection** (inform user briefly):
-> 📁 Using project: `{project_id}` ({new/existing})
+> 📁 Using project: `{project_id}` (new/existing)
 
 ---
 
@@ -415,55 +362,7 @@ For each paper in `papers/`:
 2. Extract: core contribution, math formulas, limitations, future work
 3. Note connections to other papers
 
-**⚠️ Handling Long Papers (>50KB or >15k tokens):**
-
-If a .tex file is too long to read in one pass:
-
-1. **First pass - Structure scan:**
-   ```bash
-   # List all .tex files and their sizes
-   ls -la $WORKSPACE/papers/{arxiv_id}/
-   # Check line count
-   wc -l $WORKSPACE/papers/{arxiv_id}/*.tex
-   ```
-
-2. **Chunked reading strategy:**
-   - Read `abstract` section first (usually in main.tex, first 200 lines)
-   - Read `\section{Introduction}` or `\section{Method}` separately
-   - Read `\section{Experiments}` or `\section{Results}` separately
-   - Read `\section{Conclusion}` and `\section{Related Work}` last
-
-   Use the Read tool with `offset` and `limit` parameters:
-   ```
-   Tool: Read
-   Arguments:
-     file_path: "$WORKSPACE/papers/2404.04429/main.tex"
-     offset: 1
-     limit: 500    # First 500 lines (abstract + intro)
-   ```
-
-   Then continue:
-   ```
-   Tool: Read
-   Arguments:
-     file_path: "$WORKSPACE/papers/2404.04429/main.tex"
-     offset: 500
-     limit: 500    # Lines 500-1000 (method section)
-   ```
-
-3. **Priority sections for idea generation:**
-   | Priority | Section | Why |
-   |----------|---------|-----|
-   | 1 | Abstract | Core contribution |
-   | 2 | Method/Approach | Technical details, formulas |
-   | 3 | Experiments | What works, what doesn't |
-   | 4 | Conclusion/Future Work | Limitations, open problems |
-   | 5 | Related Work | Connections to other papers |
-
-4. **Skip if context-limited:**
-   - Appendix (proofs, supplementary)
-   - Acknowledgments
-   - Detailed hyperparameter tables
+**Long Papers (>50KB):** See `references/reading-long-papers.md` for chunked reading strategy.
 
 For each repo in `repos/`:
 1. Understand structure: `gen_code_tree_structure` equivalent
@@ -478,38 +377,15 @@ Look for:
 - Scalability issues
 - Assumptions that could be relaxed
 
-### 5.3 Generate Idea 1
+### 5.3 Generate 5 Ideas
 
-Create `$WORKSPACE/ideas/idea_1.md` using the template in `references/idea-template.md`.
+Create `$WORKSPACE/ideas/idea_1.md` through `idea_5.md` using template in `references/idea-template.md`.
 
-**MUST include (with actual citations from your research):**
-- One-line summary
-- Challenges addressed
-- **Existing methods & limitations (cite specific papers by arXiv ID)**
-  - Example: "Method A [arXiv:2301.12345] achieves X but fails at Y"
-  - Example: "Method B [arXiv:2302.67890] proposes Z but has limitation W"
-- Motivation (why this gap matters)
-- Proposed method (with math formulas)
-- **How this improves on cited papers**
-- Expected advantages
-- Evaluation plan (datasets, baselines from the papers you read)
-- Novelty/Feasibility/Impact scores
+**Key requirements:**
+- Each idea must cite ≥2 papers by arXiv ID
+- Use different strategies (see template): combination, simplification, generalization, constraint relaxation, architecture innovation
 
-**❌ REJECTED if:** No arXiv IDs cited, or ideas not connected to searched literature
-
-### 5.4 Generate Ideas 2-5
-
-For each subsequent idea, explicitly try a **different strategy**:
-
-| Idea | Strategy |
-|------|----------|
-| 1 | Combination - merge techniques from 2+ papers |
-| 2 | Simplification - simplify complex method |
-| 3 | Generalization - extend to new domain/task |
-| 4 | Constraint relaxation - remove limiting assumption |
-| 5 | Architecture innovation - novel model design |
-
-Create `idea_2.md`, `idea_3.md`, `idea_4.md`, `idea_5.md`.
+**❌ REJECTED if:** No arXiv IDs cited, or ideas not grounded in literature
 
 **Output:** `$WORKSPACE/ideas/idea_1.md` through `idea_5.md`
 
@@ -519,36 +395,16 @@ Create `idea_2.md`, `idea_3.md`, `idea_4.md`, `idea_5.md`.
 
 ### 6.1 Evaluate All Ideas
 
-Create evaluation matrix:
-
-```markdown
-# Idea Evaluation
-
-| Idea | Title | Novelty | Feasibility | Impact | Total |
-|------|-------|---------|-------------|--------|-------|
-| 1 | ... | 4 | 3 | 4 | 11 |
-| 2 | ... | 5 | 4 | 5 | 14 |
-| 3 | ... | 3 | 5 | 3 | 11 |
-| 4 | ... | 4 | 4 | 4 | 12 |
-| 5 | ... | 3 | 3 | 4 | 10 |
-
-**Selected: Idea 2**
-
-## Selection Rationale
-[Why this idea is most promising - technical innovation, feasibility, impact]
-```
+Score each idea on Novelty/Feasibility/Impact (1-5). Select highest total.
 
 ### 6.2 Enhance Selected Idea
 
-Take the winning idea and create `$WORKSPACE/ideas/selected_idea.md`:
-
-**Enhancements to add:**
-1. More detailed math formulations (complete loss functions, gradients)
-2. Specific architecture choices (layer sizes, activations)
-3. Hyperparameter recommendations
-4. Implementation roadmap
-5. Potential failure modes and mitigations
-6. Detailed experiment design
+Create `$WORKSPACE/ideas/selected_idea.md` with:
+- Detailed math (loss functions, gradients)
+- Architecture choices
+- Hyperparameters
+- Implementation roadmap
+- Failure modes & mitigations
 
 **Output:** `$WORKSPACE/ideas/selected_idea.md`
 
@@ -556,91 +412,14 @@ Take the winning idea and create `$WORKSPACE/ideas/selected_idea.md`:
 
 ## Step 7: Code Survey - Map Idea to Implementations
 
-This step bridges theory and code. For each **atomic concept** in the selected idea, find corresponding implementations in the reference repos.
+Map each **atomic concept** in the selected idea to code in reference repos.
 
-### 7.1 Extract Atomic Concepts
+See `references/code-mapping.md` for detailed template.
 
-From selected_idea.md, list all concepts needing implementation:
-
-```markdown
-## Atomic Concepts to Implement
-
-1. Multi-head Self-Attention
-2. Graph Message Passing
-3. Energy-based Diffusion
-4. Adaptive Diffusivity Function
-5. ...
-```
-
-### 7.2 Survey Codebases
-
-For each concept:
-
-1. Search repos for relevant code:
-   ```bash
-   grep -r "class.*Attention" $WORKSPACE/repos/
-   grep -r "def forward" $WORKSPACE/repos/
-   ```
-
-2. Read and understand the implementation
-
-3. Document the mapping
-
-### 7.3 Create Implementation Report
-
-Write to `$WORKSPACE/ideas/implementation_report.md`:
-
-```markdown
-# Implementation Report
-
-## Selected Idea Summary
-[One paragraph summary]
-
-## Concept-to-Code Mapping
-
-### Concept 1: Multi-head Self-Attention
-
-**Math Formula:**
-$$
-\text{Attention}(Q,K,V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
-$$
-
-**Reference Implementation:**
-- File: `repos/transformer/attention.py`
-- Class: `MultiHeadAttention`
-- Key code:
-```python
-class MultiHeadAttention(nn.Module):
-    def __init__(self, d_model, n_heads):
-        self.d_k = d_model // n_heads
-        self.W_q = nn.Linear(d_model, d_model)
-        # ...
-
-    def forward(self, x):
-        Q = self.W_q(x)
-        # ...
-```
-
-**Adaptation needed:**
-- [What to modify for our idea]
-
----
-
-### Concept 2: Graph Message Passing
-...
-
----
-
-## Implementation Roadmap
-
-1. [ ] Start with Concept X (foundational)
-2. [ ] Build Concept Y on top
-3. [ ] Integrate with Concept Z
-4. [ ] Add training loop from repo W
-
-## Recommended Starting Point
-[Which repo to fork/use as base]
-```
+**Quick steps:**
+1. Extract atomic concepts from `selected_idea.md`
+2. Search repos: `grep -r "class.*Attention" $WORKSPACE/repos/`
+3. Document mapping to `$WORKSPACE/ideas/implementation_report.md`
 
 **Output:** `$WORKSPACE/ideas/implementation_report.md`
 
@@ -648,53 +427,12 @@ class MultiHeadAttention(nn.Module):
 
 ## Step 8: Final Summary
 
-Create `$WORKSPACE/ideas/summary.md`:
-
-```markdown
-# Research Idea Generation Report
-
-## Task
-- Domain: {domain}
-- Focus: {focus}
-- Date: {date}
-
-## Resources Gathered
-- Papers analyzed: X
-- Repositories cloned: Y
-- Key techniques identified: Z
-
-## Ideas Generated
-1. **[Idea 1 title]** - Score: 11
-2. **[Idea 2 title]** - Score: 14 ⭐ SELECTED
-3. **[Idea 3 title]** - Score: 11
-4. **[Idea 4 title]** - Score: 12
-5. **[Idea 5 title]** - Score: 10
-
-## Selected Idea
-**{Title}**
-
-{One paragraph description}
-
-### Key Innovation
-{What makes this novel}
-
-### Implementation Ready
-- Math formulas: ✓ Complete
-- Code references: ✓ Mapped
-- Evaluation plan: ✓ Defined
-
-## Next Steps
-1. Run `/research-pipeline` with `selected_idea.md` as input
-2. Or manually implement following `implementation_report.md`
-
-## Files Generated
-- `task.json` - Task definition
-- `search_results.md` - Search results
-- `prepare_res.md` - Selected repos
-- `ideas/idea_*.md` - 5 generated ideas
-- `ideas/selected_idea.md` - Enhanced best idea
-- `ideas/implementation_report.md` - Code mapping
-```
+Create `$WORKSPACE/ideas/summary.md` with:
+- Task overview (domain, focus)
+- Resources gathered (papers, repos count)
+- All 5 ideas with scores
+- Selected idea details
+- Next steps: `/research-pipeline` or manual implementation
 
 **Output:** `$WORKSPACE/ideas/summary.md`
 
@@ -717,15 +455,11 @@ Before completing, verify:
 ## Integration with Other Skills
 
 **After idea-generation:**
-```
-/research-pipeline  → Implement the selected idea
-```
+- `/research-pipeline` → Implement the selected idea
 
 **To gather more resources:**
-```
-/arxiv "specific topic"     → Search more papers
-/literature-review          → Deep dive into papers
-```
+- `/literature-survey` → Comprehensive paper collection
+- `/write-review-paper` → Synthesize into review
 
 ---
 
