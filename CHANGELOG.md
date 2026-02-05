@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/tsingyuai/scientific/compare/v1.2.2...v1.3.0) (2026-02-05)
+
+### Features
+
+* **skills:** add shared workspace-spec.md, unify all skills ([2aa025c](https://github.com/tsingyuai/scientific/commit/2aa025ce763227583b5a19b7f31f5de10b731261))
+
 ## [1.2.2](https://github.com/tsingyuai/scientific/compare/v1.2.1...v1.2.2) (2026-02-05)
 
 ### Refactoring
