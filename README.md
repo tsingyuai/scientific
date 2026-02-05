@@ -40,10 +40,10 @@
 ## Quick Start
 
 ```bash
-# Install
-npm install scientify
+# Install the plugin
+openclaw plugins install scientify
 
-# Add to your OpenClaw config, then:
+# Start using
 openclaw "Research transformer efficiency and generate ideas"
 ```
 
@@ -52,16 +52,12 @@ openclaw "Research transformer efficiency and generate ideas"
 ## Installation
 
 ```bash
-npm install scientify
+openclaw plugins install scientify
 ```
 
-Add to OpenClaw config:
+> **Note:** Do NOT use `npm install scientify`. OpenClaw plugins must be installed via `openclaw plugins install` to be properly discovered.
 
-```json
-{
-  "plugins": ["scientify"]
-}
-```
+The plugin will be installed to `~/.openclaw/extensions/scientify/` and automatically enabled.
 
 ---
 
@@ -236,15 +232,36 @@ Agent: [Reading selected_idea.md and related papers]
 
 ## Configuration
 
+After installation, the plugin is automatically enabled. You can customize settings in `~/.openclaw/openclaw.json`:
+
 ```json
 {
   "plugins": {
-    "scientify": {
-      "workspaceRoot": "~/my-research",
-      "defaultMaxPapers": 15
+    "entries": {
+      "scientify": {
+        "enabled": true,
+        "workspaceRoot": "~/my-research",
+        "defaultMaxPapers": 15
+      }
     }
   }
 }
+```
+
+### Plugin Management
+
+```bash
+# List installed plugins
+openclaw plugins list
+
+# Disable plugin
+openclaw plugins disable scientify
+
+# Enable plugin
+openclaw plugins enable scientify
+
+# Update to latest version
+openclaw plugins update scientify
 ```
 
 ---

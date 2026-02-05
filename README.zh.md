@@ -40,10 +40,10 @@
 ## 快速开始
 
 ```bash
-# 安装
-npm install scientify
+# 安装插件
+openclaw plugins install scientify
 
-# 添加到 OpenClaw 配置后：
+# 开始使用
 openclaw "研究 transformer 效率并生成研究想法"
 ```
 
@@ -52,16 +52,12 @@ openclaw "研究 transformer 效率并生成研究想法"
 ## 安装
 
 ```bash
-npm install scientify
+openclaw plugins install scientify
 ```
 
-添加到 OpenClaw 配置:
+> **注意：** 不要使用 `npm install scientify`。OpenClaw 插件必须通过 `openclaw plugins install` 安装才能被正确发现。
 
-```json
-{
-  "plugins": ["scientify"]
-}
-```
+插件将安装到 `~/.openclaw/extensions/scientify/` 并自动启用。
 
 ---
 
@@ -237,15 +233,36 @@ Agent: [读取 selected_idea.md 和相关论文]
 
 ## 配置
 
+安装后插件自动启用。可以在 `~/.openclaw/openclaw.json` 中自定义设置：
+
 ```json
 {
   "plugins": {
-    "scientify": {
-      "workspaceRoot": "~/my-research",
-      "defaultMaxPapers": 15
+    "entries": {
+      "scientify": {
+        "enabled": true,
+        "workspaceRoot": "~/my-research",
+        "defaultMaxPapers": 15
+      }
     }
   }
 }
+```
+
+### 插件管理
+
+```bash
+# 列出已安装插件
+openclaw plugins list
+
+# 禁用插件
+openclaw plugins disable scientify
+
+# 启用插件
+openclaw plugins enable scientify
+
+# 更新到最新版本
+openclaw plugins update scientify
 ```
 
 ---
