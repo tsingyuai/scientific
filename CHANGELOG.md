@@ -1,3 +1,9 @@
+## [1.1.2](https://github.com/tsingyuai/scientific/compare/v1.1.1...v1.1.2) (2026-02-05)
+
+### Bug Fixes
+
+* add openclaw.plugin.json manifest for plugin discovery ([9623d44](https://github.com/tsingyuai/scientific/commit/9623d440b2639e9ab1f52d337aeda21515857801))
+
 ## [1.1.1](https://github.com/tsingyuai/scientific/compare/v1.1.0...v1.1.1) (2026-02-04)
 
 ### Documentation
