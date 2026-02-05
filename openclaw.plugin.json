@@ -4,9 +4,9 @@
   "description": "AI-powered research workflow automation for OpenClaw",
   "configSchema": {},
   "skills": [
-    "idea-generation",
-    "research-pipeline",
-    "literature-review",
-    "arxiv"
+    "skills/idea-generation",
+    "skills/research-pipeline",
+    "skills/literature-review",
+    "skills/arxiv"
   ]
 }
