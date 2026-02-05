@@ -1,3 +1,9 @@
+## [1.1.4](https://github.com/tsingyuai/scientific/compare/v1.1.3...v1.1.4) (2026-02-05)
+
+### Bug Fixes
+
+* correct skill paths in openclaw.plugin.json ([e461c53](https://github.com/tsingyuai/scientific/commit/e461c53631dc55d00037c842830c2bd6c685efc4))
+
 ## [1.1.3](https://github.com/tsingyuai/scientific/compare/v1.1.2...v1.1.3) (2026-02-05)
 
 ### Documentation
