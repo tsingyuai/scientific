@@ -14,6 +14,8 @@ metadata:
 
 Comprehensive literature discovery workflow for a research domain. This skill searches broadly, filters by relevance, clusters by direction, and iterates to ensure complete coverage.
 
+**Workspace:** See `../_shared/workspace-spec.md` for directory structure. Outputs go to `$WORKSPACE/survey/` and `$WORKSPACE/papers/`.
+
 ## Architecture: Isolated Sub-agent
 
 This survey runs in an **isolated sub-session** to avoid context pollution. The main session only receives the final report.

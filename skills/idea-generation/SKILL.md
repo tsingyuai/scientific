@@ -17,6 +17,8 @@ Generate innovative research ideas grounded in literature analysis. This skill r
 
 **Core principle:** Ideas MUST be grounded in actual papers, not generated from model knowledge.
 
+**Workspace:** See `../_shared/workspace-spec.md` for directory structure. Outputs go to `$WORKSPACE/ideas/`.
+
 ---
 
 ## Step 1: Check Workspace Resources

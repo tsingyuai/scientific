@@ -13,44 +13,22 @@ metadata:
 
 # Research Pipeline
 
-Automate an end-to-end ML research workflow: idea -> literature search -> survey -> plan -> implement -> review -> iterate.
+Automate an end-to-end ML research workflow: idea → literature → survey → plan → implement → review → iterate.
 
-All intermediate results live in a project-based workspace directory. **File existence = step completion.** If a step's output file already exists, skip that step and move on. This enables crash recovery and incremental progress.
+**Workspace:** See `../_shared/workspace-spec.md` for directory structure. Outputs go to `$WORKSPACE/project/`, `$WORKSPACE/iterations/`.
+
+**File existence = step completion.** Skip steps whose output already exists.
 
 ---
 
-## Workspace Convention (Project-based)
+## Step 0: Check Active Project
 
-**IMPORTANT**: This skill uses the same project-based workspace as `idea-generation`. Check or set the active project first.
-
-### Check Active Project
 ```bash
 cat ~/.openclaw/workspace/projects/.active 2>/dev/null
 ```
 
-If a project is active, set `$WORKSPACE = ~/.openclaw/workspace/projects/{project_id}/`.
-
-If no active project exists, create one based on the research idea (see Step 1).
-
-### Directory Structure
-```
-$WORKSPACE/
-├── project.json          # Project metadata
-├── task.json             # Research task/idea definition
-├── search_results.md     # Search results (Step 2)
-├── prepare_res.md        # Selected repos (Step 3)
-├── papers/               # Downloaded papers (Step 4)
-├── repos/                # Cloned repositories (Step 3)
-├── notes/                # Paper notes (Step 5)
-├── survey_res.md         # Literature survey (Step 5)
-├── plan_res.md           # Implementation plan (Step 6)
-├── project/              # Code implementation (Step 7)
-├── ml_res.md             # Implementation report (Step 7)
-├── iterations/           # Review iterations (Step 8-9)
-│   ├── judge_v1.md
-│   └── ...
-└── experiment_res.md     # Final results (Step 10)
-```
+If active, set `$WORKSPACE = ~/.openclaw/workspace/projects/{project_id}/`.
+If none, create based on research idea in Step 1.
 
 ---
 
