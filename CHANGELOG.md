@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/tsingyuai/scientific/compare/v1.2.0...v1.2.1) (2026-02-05)
+
+### Refactoring
+
+* **skills:** improve skill quality per OpenClaw best practices ([542f98e](https://github.com/tsingyuai/scientific/commit/542f98ee3620514a217404e33f81ef916ba81364))
+
 ## [1.2.0](https://github.com/tsingyuai/scientific/compare/v1.1.5...v1.2.0) (2026-02-05)
 
 ### Features
