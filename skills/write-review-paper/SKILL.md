@@ -1,5 +1,5 @@
 ---
-name: literature-review
+name: write-review-paper
 description: "Write a literature review or survey paper from EXISTING papers. Guides through reading, note-taking, synthesis, and structured writing. Use after /literature-survey has collected papers."
 metadata:
   {

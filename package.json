@@ -32,13 +32,16 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
+    "dev": "tsc --watch",
+    "dev:reload": "nodemon --watch src --watch skills --ext ts,md,json --exec \"npm run build && pkill -USR1 -f 'openclaw.mjs gateway' || true\" --delay 500ms",
     "prepublishOnly": "npm run clean && npm run build"
   },
   "devDependencies": {
     "@sinclair/typebox": "^0.32.0",
+    "@types/node": "^20.0.0",
+    "nodemon": "^3.1.11",
     "tar": "^7.0.0",
-    "typescript": "^5.3.0",
-    "@types/node": "^20.0.0"
+    "typescript": "^5.3.0"
   },
   "peerDependencies": {
     "openclaw": ">=2024.0.0"
