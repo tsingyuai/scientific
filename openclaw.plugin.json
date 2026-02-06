@@ -22,6 +22,11 @@
   "skills": [
     "skills/idea-generation",
     "skills/research-pipeline",
+    "skills/research-survey",
+    "skills/research-plan",
+    "skills/research-implement",
+    "skills/research-review",
+    "skills/research-experiment",
     "skills/literature-survey",
     "skills/write-review-paper"
   ]

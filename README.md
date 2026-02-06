@@ -12,9 +12,14 @@
 
 | Skill | Description |
 |-------|-------------|
-| **idea-generation** | Generate innovative research ideas from a topic. Searches arXiv/GitHub, downloads papers, analyzes literature, outputs 5 ideas with citations. |
-| **research-pipeline** | End-to-end ML research workflow: idea → literature → survey → plan → implement → review → iterate. |
-| **literature-survey** | Comprehensive literature survey with incremental workflow: search → filter → download → cluster → report. |
+| **research-pipeline** | Orchestrator for end-to-end ML research. Spawns sub-agents for each phase, verifies outputs between steps. |
+| **research-survey** | Deep analysis of downloaded papers: extract formulas, map to code, produce method comparison table. |
+| **research-plan** | Create structured 4-part implementation plan (Dataset/Model/Training/Testing) from survey results. |
+| **research-implement** | Implement ML code from plan, run 2-epoch validation with `uv` venv isolation, verify real results. |
+| **research-review** | Review implementation against plan and survey. Iterates fix-rerun-review up to 3 times. |
+| **research-experiment** | Full training run + ablation experiments + result analysis. Requires review PASS. |
+| **literature-survey** | Comprehensive literature survey: search → filter → download → cluster → report. |
+| **idea-generation** | Generate innovative research ideas from a topic. Searches arXiv/GitHub, downloads papers, outputs 5 ideas. |
 
 ### Commands (Direct, no LLM)
 
@@ -227,6 +232,19 @@ Agent: [Reading selected_idea.md and related papers]
 │   │   │   └── {arxiv_id}.json
 │   │   └── {direction}/         # Clustered papers by research direction
 │   ├── repos/                   # Cloned repos
+│   ├── notes/                   # /research-survey: per-paper analysis
+│   │   └── paper_{arxiv_id}.md
+│   ├── survey_res.md            # /research-survey: method comparison
+│   ├── plan_res.md              # /research-plan: implementation plan
+│   ├── project/                 # /research-implement: ML code
+│   │   ├── model/
+│   │   ├── data/
+│   │   ├── run.py
+│   │   └── requirements.txt
+│   ├── ml_res.md                # /research-implement: execution report
+│   ├── iterations/              # /research-review: judge reports
+│   │   └── judge_v*.md
+│   ├── experiment_res.md        # /research-experiment: final results
 │   └── ideas/                   # Generated ideas
 │       ├── idea_1.md
 │       ├── idea_2.md

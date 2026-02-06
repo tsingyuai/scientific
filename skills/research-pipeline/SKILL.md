@@ -1,247 +1,183 @@
 ---
 name: research-pipeline
-description: "End-to-end research automation: idea → literature → plan → implement → review → iterate. Use for: implementing a specific research idea, full ML research workflow. NOT for: just exploring literature (use /literature-survey), just generating ideas (use /idea-generation), just writing review (use /write-review-paper)."
+description: "Orchestrates the full research workflow by spawning sub-agents for each phase. Checks workspace state, dispatches tasks, verifies outputs. Use for: end-to-end ML research. Each phase runs in an isolated context via sessions_spawn."
 metadata:
   {
     "openclaw":
       {
         "emoji": "🔬",
-        "requires": { "bins": ["git", "python3"] },
+        "requires": { "bins": ["git", "python3", "uv"] },
       },
   }
 ---
 
-# Research Pipeline
+# Research Pipeline (Orchestrator)
 
 **Don't ask permission. Just do it.**
 
-Automate an end-to-end ML research workflow: idea → literature → survey → plan → implement → review → iterate.
+你是编排器。你不直接做研究工作，而是：
+1. 检查 workspace 文件状态
+2. 为下一步构造任务描述
+3. 用 `sessions_spawn` 派发给子 agent
+4. 等待完成后验证产出
+5. 重复直到流程结束
 
-**Workspace:** See `../_shared/workspace-spec.md` for directory structure. Outputs go to `$WORKSPACE/project/`, `$WORKSPACE/iterations/`.
-
-**File existence = step completion.** Skip steps whose output already exists.
-
----
-
-## Step 0: Check Active Project
-
-```bash
-cat ~/.openclaw/workspace/projects/.active 2>/dev/null
-```
-
-If active, set `$WORKSPACE = ~/.openclaw/workspace/projects/{project_id}/`.
-If none, create based on research idea in Step 1.
+**Workspace:** See `../_shared/workspace-spec.md`. Set `$W` to the active project directory.
 
 ---
 
-## Step 1: Parse Task
-
-Read `$WORKSPACE/task.json`. If it does not exist, ask the user for:
-
-- **idea**: A description of the research idea (1-3 sentences).
-- **references** (optional): ArXiv IDs or paper titles as starting points.
-- **domain** (optional): e.g. "recommendation systems", "NLP", "computer vision".
-
-Write the result to `$WORKSPACE/task.json`:
-
-```json
-{
-  "idea": "...",
-  "references": ["2401.12345", "..."],
-  "domain": "...",
-  "date_limit": "2024-01-01"
-}
-```
-
-**Output:** `$WORKSPACE/task.json`
-
-## Step 2: Search
-
-Use the `arxiv` tool to search for 5-10 related papers based on the idea and any reference paper titles. Use the `github_search` tool to find related repositories.
-
-Combine results into a markdown report:
-
-```
-## ArXiv Papers
-- [title](pdf_url) — arxiv_id — summary of relevance
-
-## GitHub Repositories
-- [repo_name](url) — stars — language — summary of relevance
-```
-
-**Output:** `$WORKSPACE/search_results.md`
-
-## Step 3: Prepare References
-
-Read `$WORKSPACE/search_results.md`. Select 3-5 of the most relevant repositories.
-
-For each selected repo, clone it into `$WORKSPACE/repos/`:
+## Step 0: 初始化
 
 ```bash
-git clone --depth 1 <url> $WORKSPACE/repos/<repo_name>
+ACTIVE=$(cat ~/.openclaw/workspace/projects/.active 2>/dev/null)
 ```
 
-Write a summary of selected repos and their relevance to the idea.
+如果没有 active project：
+1. 问用户：研究主题是什么？
+2. 创建项目目录
+3. 写入 `task.json`
 
-**Output:** `$WORKSPACE/prepare_res.md`
+设置 `$W = ~/.openclaw/workspace/projects/{project-id}`
 
-## Step 4: Download Papers
+---
 
-For each important paper from Step 2, use the `arxiv` tool with `download: true` and `output_dir: "$WORKSPACE/papers/"` to get .tex source files.
+## 调度循环
 
-If download fails for any paper, note the failure and continue. The survey step can work with abstracts alone.
+按顺序检查每个阶段。**每次只执行一个阶段。**
 
-**Output:** `$WORKSPACE/papers/*.tex` (or `.md` summaries if .tex unavailable)
+### Phase 1: Literature Survey
 
-## Step 5: Literature Survey
+**检查:** `$W/papers/_meta/` 目录存在且有 `.json` 文件？
 
-This is the most intellectually demanding step. Read `references/prompts/survey.md` for detailed guidance.
-
-For each paper:
-
-1. Read the .tex source (or abstract) thoroughly.
-2. Extract: core method, mathematical formulas, key contributions.
-3. Read the corresponding reference codebase in `$WORKSPACE/repos/`.
-4. Map math formulas to code implementations.
-5. Write structured notes to `$WORKSPACE/notes/paper_NNN.md`.
-
-Each note file should contain:
-
-```markdown
-# [Paper Title]
-
-## Core Method
-...
-
-## Math Formulas
-...
-
-## Code Implementation
-File: repos/<repo>/path/to/file.py
-```python
-# relevant code excerpt
-```
-
-## Key Insights
-...
-```
-
-After all papers are surveyed, write a synthesis combining all notes.
-
-**Output:** `$WORKSPACE/notes/paper_*.md` + `$WORKSPACE/survey_res.md`
-
-## Step 6: Implementation Plan
-
-Read `references/prompts/plan.md` for detailed guidance.
-
-Based on `survey_res.md`, `prepare_res.md`, and `task.json`, create a four-part plan:
-
-1. **Dataset Plan**: data source, loading pipeline, preprocessing, dataloader design.
-2. **Model Plan**: architecture, math formulas to implement, reference code to adapt.
-3. **Training Plan**: loss functions, optimizer, hyperparameters, monitoring.
-4. **Testing Plan**: metrics, evaluation protocol, baselines.
-
-**Output:** `$WORKSPACE/plan_res.md`
-
-## Step 7: Implement
-
-Read `references/prompts/implement.md` for detailed guidance.
-
-Create a self-contained project in `$WORKSPACE/project/`:
+**如果缺失，spawn:**
 
 ```
-$WORKSPACE/project/
-  model/          # model architecture
-  data/           # data loading and preprocessing
-  training/       # training loop and configs
-  testing/        # evaluation scripts
-  utils/          # shared utilities
-  run.py          # main entry point
-  requirements.txt
+sessions_spawn({
+  task: "工作目录: $W\n执行 /literature-survey 技能\n\n研究主题: {从 task.json 提取}\n请搜索、筛选、下载相关论文到 $W/papers/",
+  label: "Literature Survey"
+})
 ```
 
-**Critical rules:**
+**验证:** `ls $W/papers/_meta/*.json` 至少有 3 个文件
 
-- Do NOT import directly from `$WORKSPACE/repos/`. Adapt and rewrite code.
-- Implement EVERY component from `plan_res.md`.
-- Use real datasets, not toy data.
-- First run: 2 epochs only (quick validation).
+---
 
-Execute:
+### Phase 2: Deep Survey
 
-```bash
-cd $WORKSPACE/project && pip install -r requirements.txt && python run.py --epochs 2
+**检查:** `$W/survey_res.md` 存在？
+
+**如果缺失，先读取 Phase 1 摘要，然后 spawn:**
+
+```
+sessions_spawn({
+  task: "工作目录: $W\n执行 /research-survey 技能\n\n上下文: 已下载 {N} 篇论文，方向包括 {directions}\n请深度分析论文，提取公式，写入 survey_res.md",
+  label: "Deep Survey"
+})
 ```
 
-**Note:** GPU support requires external configuration. For GPU-accelerated training, consider using a dedicated ML environment or cloud instance.
+**验证:** `$W/survey_res.md` 存在且包含"核心方法对比"表格
 
-**Output:** `$WORKSPACE/project/` (code) + `$WORKSPACE/ml_res.md` (implementation report)
+---
 
-## Step 8: Review
+### Phase 3: Implementation Plan
 
-Read `references/prompts/review.md` for detailed guidance.
+**检查:** `$W/plan_res.md` 存在？
 
-Review the implementation against:
+**如果缺失，读取 survey_res.md 摘要，然后 spawn:**
 
-- Each atomic idea from `survey_res.md`: is the math correctly translated to code?
-- The plan from `plan_res.md`: are all components present?
-- Code quality: no toy implementations, proper error handling, correct data pipeline.
-
-Write a structured review:
-
-```markdown
-# Review v1
-
-## Verdict: PASS / NEEDS_REVISION
-
-## Checklist
-- [ ] Dataset loading matches plan
-- [ ] Model architecture matches formulas
-- [ ] Loss function correct
-- [ ] Training loop proper
-- [ ] Evaluation metrics correct
-
-## Issues (if NEEDS_REVISION)
-1. Issue description → suggested fix
-2. ...
+```
+sessions_spawn({
+  task: "工作目录: $W\n执行 /research-plan 技能\n\n上下文: 调研发现核心方法是 {method}，推荐技术路线 {route}\n请制定完整实现计划到 plan_res.md",
+  label: "Research Plan"
+})
 ```
 
-**Output:** `$WORKSPACE/iterations/judge_v1.md`
+**验证:** `$W/plan_res.md` 存在且包含 4 个 section（Dataset/Model/Training/Testing）
 
-## Step 9: Iterate
+---
 
-If the review verdict is `NEEDS_REVISION`:
+### Phase 4: Implementation
 
-1. Read `$WORKSPACE/iterations/judge_vN.md` for the latest suggestions.
-2. Fix each issue in `$WORKSPACE/project/`.
-3. Re-run the 2-epoch validation.
-4. Write a new review to `$WORKSPACE/iterations/judge_v(N+1).md`.
-5. Repeat until `PASS` or 3 iterations reached.
+**检查:** `$W/ml_res.md` 存在？
 
-If 3 iterations are exhausted without PASS, summarize remaining issues and ask the user for guidance.
+**如果缺失，读取 plan_res.md 要点，然后 spawn:**
 
-**Output:** `$WORKSPACE/iterations/judge_v*.md` (review history)
+```
+sessions_spawn({
+  task: "工作目录: $W\n执行 /research-implement 技能\n\n上下文:\n- 计划包含 {N} 个组件: {list}\n- 数据集: {dataset}\n- 框架: PyTorch\n请实现代码到 $W/project/，运行 2 epoch 验证，写入 ml_res.md",
+  label: "Research Implement"
+})
+```
 
-## Step 10: Full Training
+**验证:**
+- `$W/project/run.py` 存在
+- `$W/ml_res.md` 包含 `[RESULT]` 行
+- loss 值非 NaN/Inf
 
-Once review passes:
+---
 
-1. Update epoch count in `run.py` to the full training value.
-2. Execute full training run.
-3. Collect and analyze results.
+### Phase 5: Review
 
-**Output:** `$WORKSPACE/experiment_res.md`
+**检查:** `$W/iterations/` 下最新 `judge_v*.md` 的 verdict 是否为 PASS？
 
-## Batch Processing Rule
+**如果没有 PASS，spawn:**
 
-When you need to apply the same LLM operation to more than 10 files (e.g., summarizing all papers), do NOT process them one by one in conversation. Instead, write a script to handle them in batch.
+```
+sessions_spawn({
+  task: "工作目录: $W\n执行 /research-review 技能\n\n上下文:\n- 实现报告: ml_res.md 显示 train_loss={value}\n- 计划在 plan_res.md\n请审查代码，如需修改则迭代修复（最多 3 轮）",
+  label: "Research Review"
+})
+```
+
+**验证:** 最新 `judge_v*.md` 中 `verdict: PASS` 或 `verdict: BLOCKED`
+
+如果 BLOCKED → 报告用户，等待指示
+
+---
+
+### Phase 6: Full Experiment
+
+**检查:** `$W/experiment_res.md` 存在？
+
+**如果缺失，spawn:**
+
+```
+sessions_spawn({
+  task: "工作目录: $W\n执行 /research-experiment 技能\n\n上下文:\n- Review PASS，代码已验证\n- plan_res.md 中指定 full epochs\n请执行完整训练 + 消融实验，写入 experiment_res.md",
+  label: "Research Experiment"
+})
+```
+
+**验证:** `$W/experiment_res.md` 包含 `[RESULT]` 行和消融表格
+
+---
+
+## 完成
+
+所有 Phase 验证通过后，输出最终摘要：
+
+```
+研究流程完成！
+- 论文: {N} 篇分析
+- 代码: $W/project/
+- 结果: $W/experiment_res.md
+- 审查: $W/iterations/ ({N} 轮)
+```
+
+---
+
+## 上下文桥接规则
+
+每次 spawn 前，编排器必须：
+1. **读取**上一步的产出文件
+2. **摘要** 2-5 行关键信息（不要复制全文）
+3. **写入** spawn task 的"上下文"部分
+
+这确保子 agent 拿到足够信息启动，同时不会被前序步骤的完整输出污染。
 
 ## Recovery
 
-If the session crashes or context fills up:
-
-1. List files in `$WORKSPACE/` to see which steps completed.
-2. Read the most recent output file to understand current state.
-3. Resume from the first missing output file.
-
-Never re-do a step whose output file already exists unless the user explicitly asks.
+如果编排器中断：
+1. 重新运行 /research-pipeline
+2. 编排器会自动检查所有文件，跳过已完成的阶段
+3. 从第一个缺失的产出文件开始继续

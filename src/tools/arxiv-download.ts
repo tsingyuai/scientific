@@ -4,6 +4,12 @@ import * as path from "node:path";
 import * as tar from "tar";
 import { Result } from "./result.js";
 
+// Rate limit: arXiv recommends ~3 seconds between requests
+const RATE_LIMIT_MS = 3000;
+
+/** Non-blocking delay that yields to event loop */
+const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
 export const ArxivDownloadSchema = Type.Object({
   arxiv_ids: Type.Array(Type.String(), {
     description: "List of arXiv IDs to download (e.g. ['2401.12345', '2312.00001']).",
@@ -178,7 +184,14 @@ export function createArxivDownloadTool() {
         fallback_reason?: string;
       }> = [];
 
-      for (const arxivId of arxivIds) {
+      for (let i = 0; i < arxivIds.length; i++) {
+        const arxivId = arxivIds[i];
+
+        // Rate limit: wait before each request (except first)
+        if (i > 0) {
+          await delay(RATE_LIMIT_MS);
+        }
+
         // Always try .tex first, fallback to PDF automatically
         const result = await downloadTexSource(arxivId, outputDir, logger);
 

@@ -54,18 +54,23 @@ All Scientify skills share a unified project-based workspace structure.
 │   ├── draft.md                 # Survey paper draft
 │   └── bibliography.bib         # References
 │
-├── plan_res.md                  # /research-pipeline: implementation plan
-├── project/                     # /research-pipeline: code implementation
+├── notes/                       # /research-survey: per-paper deep notes
+│   └── paper_{arxiv_id}.md
+├── survey_res.md                # /research-survey: deep analysis + method comparison
+├── plan_res.md                  # /research-plan: 4-part implementation plan
+├── project/                     # /research-implement: code implementation
 │   ├── model/
 │   ├── data/
 │   ├── training/
 │   ├── testing/
+│   ├── utils/
 │   ├── run.py
 │   └── requirements.txt
-├── iterations/                  # Review iterations
+├── ml_res.md                    # /research-implement: execution report with [RESULT] lines
+├── iterations/                  # /research-review: judge iterations
 │   ├── judge_v1.md
 │   └── judge_v2.md
-└── experiment_res.md            # Final results
+└── experiment_res.md            # /research-experiment: full training + ablation results
 ```
 
 ## Conventions
@@ -124,6 +129,11 @@ WORKSPACE=~/.openclaw/workspace/projects/$(cat ~/.openclaw/workspace/projects/.a
 | Skill | Primary Outputs |
 |-------|-----------------|
 | `/literature-survey` | `survey/`, `papers/` |
+| `/research-survey` | `notes/paper_*.md`, `survey_res.md` |
+| `/research-plan` | `plan_res.md` |
+| `/research-implement` | `project/`, `ml_res.md` |
+| `/research-review` | `iterations/judge_v*.md` |
+| `/research-experiment` | `experiment_res.md` |
+| `/research-pipeline` | Orchestrator — spawns the above 5 skills in sequence |
 | `/idea-generation` | `ideas/` |
 | `/write-review-paper` | `review/` |
-| `/research-pipeline` | `project/`, `iterations/`, `experiment_res.md` |

@@ -12,10 +12,14 @@
 
 | Skill | 描述 |
 |-------|------|
-| **idea-generation** | 从研究主题生成创新想法。自动搜索 arXiv/GitHub、下载论文、分析文献，输出 5 个带引用的研究想法。 |
-| **research-pipeline** | 端到端 ML 研究流程：想法 → 文献 → 综述 → 计划 → 实现 → 评审 → 迭代。 |
-| **literature-review** | 从已收集的论文生成结构化笔记和综述。 |
-| **arxiv** | 搜索 arXiv 论文并下载 .tex 源文件。 |
+| **research-pipeline** | 端到端 ML 研究编排器。通过 sessions_spawn 逐阶段派发子 agent，验证产出后推进。 |
+| **research-survey** | 深度分析已下载论文：提取公式、映射代码、生成核心方法对比表。 |
+| **research-plan** | 从调研结果制定四部分实现计划（数据集/模型/训练/测试）。 |
+| **research-implement** | 按计划实现 ML 代码，使用 `uv` 虚拟环境隔离，2 epoch 验证，确保真实结果。 |
+| **research-review** | 对照计划和调研审查实现代码，最多迭代修复 3 轮。 |
+| **research-experiment** | 完整训练 + 消融实验 + 结果分析。需要 review PASS。 |
+| **literature-survey** | 文献综述：搜索 → 筛选 → 下载 → 聚类 → 报告。 |
+| **idea-generation** | 从研究主题生成创新想法。搜索 arXiv/GitHub、下载论文，输出 5 个研究想法。 |
 
 ### Commands (直接执行，不经 LLM)
 
@@ -32,8 +36,9 @@
 
 | Tool | 描述 |
 |------|------|
-| **arxiv_search** | 搜索 arXiv API，支持关键词搜索、日期过滤、自动下载 .tex 源文件 |
-| **github_search** | 搜索 GitHub 仓库，支持关键词、语言过滤、按 stars/更新时间排序 |
+| **arxiv_search** | 搜索 arXiv API，返回论文元数据（标题、作者、摘要、ID）。 |
+| **arxiv_download** | 按 ID 下载 arXiv 论文，优先 .tex 源文件，回退到 PDF。内置速率限制。 |
+| **github_search** | 搜索 GitHub 仓库，支持关键词、语言过滤、按 stars/更新时间排序。 |
 
 ---
 
@@ -215,17 +220,35 @@ Agent: [读取 selected_idea.md 和相关论文]
 
 ```
 ~/.openclaw/workspace/projects/
-├── .active                   # 当前项目 ID
-├── nlp-summarization/        # 项目 A
-│   ├── project.json          # 元数据
-│   ├── task.json             # 任务定义
-│   ├── search_results.md     # 搜索结果
-│   ├── papers/               # 下载的论文
-│   ├── repos/                # 克隆的仓库
-│   └── ideas/                # 生成的想法
+├── .active                      # 当前项目 ID
+├── nlp-summarization/           # 项目 A
+│   ├── project.json             # 元数据
+│   ├── task.json                # 任务定义
+│   ├── survey/                  # /literature-survey 产出
+│   │   ├── search_terms.json
+│   │   └── report.md
+│   ├── papers/                  # 下载的论文
+│   │   ├── _downloads/          # 原始文件
+│   │   ├── _meta/               # 元数据 JSON
+│   │   └── {direction}/         # 按方向聚类
+│   ├── repos/                   # 克隆的仓库
+│   ├── notes/                   # /research-survey: 逐篇深度笔记
+│   │   └── paper_{arxiv_id}.md
+│   ├── survey_res.md            # /research-survey: 方法对比
+│   ├── plan_res.md              # /research-plan: 实现计划
+│   ├── project/                 # /research-implement: ML 代码
+│   │   ├── model/
+│   │   ├── data/
+│   │   ├── run.py
+│   │   └── requirements.txt
+│   ├── ml_res.md                # /research-implement: 执行报告
+│   ├── iterations/              # /research-review: 审查报告
+│   │   └── judge_v*.md
+│   ├── experiment_res.md        # /research-experiment: 最终结果
+│   └── ideas/                   # 生成的想法
 │       ├── idea_1.md
 │       ├── idea_2.md
-│       └── selected_idea.md  # 最佳想法
+│       └── selected_idea.md     # 最佳想法
 └── another-project/
 ```
 

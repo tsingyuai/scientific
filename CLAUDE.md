@@ -7,10 +7,11 @@
 Scientify 是一个 OpenClaw 插件，提供 AI 驱动的科研工作流自动化功能。
 
 **核心组件：**
-- `src/tools/` - 工具实现（arxiv_search, github_search）
+- `src/tools/` - 工具实现（arxiv_search, arxiv_download, github_search）
 - `src/commands.ts` - 聊天命令处理
 - `skills/` - 技能定义（随 npm 包发布）
 - `index.ts` - 插件入口
+- `openclaw.plugin.json` - 插件注册（skills 列表）
 
 ## 版本更新 SOP
 
@@ -104,22 +105,24 @@ scientify/
 │   ├── commands.ts          # 聊天命令
 │   ├── openclaw.d.ts        # 类型声明
 │   └── tools/
-│       ├── arxiv-tool.ts    # ArXiv 搜索工具
-│       └── github-search-tool.ts  # GitHub 搜索工具
+│       ├── arxiv-search.ts         # ArXiv 搜索工具
+│       ├── arxiv-download.ts       # ArXiv 下载工具（含速率限制）
+│       └── github-search-tool.ts   # GitHub 搜索工具
 ├── skills/
-│   ├── arxiv/SKILL.md
+│   ├── _shared/
+│   │   └── workspace-spec.md       # 所有 skill 共享的工作空间规范
 │   ├── idea-generation/
 │   │   ├── SKILL.md
 │   │   └── references/idea-template.md
-│   ├── literature-review/
-│   │   ├── SKILL.md
-│   │   └── references/note-template.md
-│   ├── research-pipeline/
-│   │   ├── SKILL.md
-│   │   └── references/
-│   │       ├── workspace-spec.md
-│   │       └── prompts/{implement,plan,review,survey}.md
-│   └── install-scientify/SKILL.md
+│   ├── literature-survey/SKILL.md  # 文献搜索 → 筛选 → 下载 → 聚类
+│   ├── research-pipeline/SKILL.md  # 编排器，通过 sessions_spawn 调度以下 5 个 skill
+│   ├── research-survey/SKILL.md    # 深度论文分析 + 方法对比
+│   ├── research-plan/SKILL.md      # 四部分实现计划
+│   ├── research-implement/SKILL.md # 代码实现 + 2 epoch 验证
+│   ├── research-review/SKILL.md    # 审查 + 迭代修复（最多 3 轮）
+│   ├── research-experiment/SKILL.md # 完整训练 + 消融实验
+│   ├── write-review-paper/SKILL.md
+│   └── install-scientify/SKILL.md  # 安装入口（不在 plugin.json 中注册）
 ├── .releaserc.json          # semantic-release 配置
 └── .github/
     └── workflows/release.yml  # 自动发布 CI/CD

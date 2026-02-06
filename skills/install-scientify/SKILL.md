@@ -1,6 +1,6 @@
 ---
 name: install-scientify
-description: "Install Scientify - AI-powered research workflow automation plugin. Adds skills for idea-generation, literature-review, research-pipeline, arxiv search, and workspace management commands."
+description: "Install Scientify - AI-powered research workflow automation plugin. Adds skills for research-pipeline (multi-agent orchestrator), literature-survey, idea-generation, arxiv tools, and workspace management commands."
 metadata:
   {
     "openclaw":
@@ -31,10 +31,14 @@ metadata:
 
 | Skill | Description |
 |-------|-------------|
-| **idea-generation** | Generate innovative research ideas. Searches arXiv/GitHub, downloads papers, analyzes literature, outputs 5 ideas with citations. |
-| **research-pipeline** | End-to-end ML research workflow: idea → literature → survey → plan → implement → review → iterate. |
-| **literature-review** | Generate structured notes and synthesis from collected papers. |
-| **arxiv** | Search arXiv.org for papers and download .tex sources. |
+| **research-pipeline** | Orchestrator for end-to-end ML research. Spawns sub-agents for each phase. |
+| **research-survey** | Deep analysis of papers: extract formulas, produce method comparison. |
+| **research-plan** | 4-part implementation plan (Dataset/Model/Training/Testing). |
+| **research-implement** | Implement ML code, run 2-epoch validation with `uv` venv isolation. |
+| **research-review** | Review implementation against plan. Iterates up to 3 times. |
+| **research-experiment** | Full training + ablation experiments. |
+| **literature-survey** | Literature survey: search → filter → download → cluster → report. |
+| **idea-generation** | Generate research ideas from arXiv/GitHub papers. |
 
 ### Commands (Direct, no LLM)
 
@@ -47,9 +51,11 @@ metadata:
 | `/project-switch <id>` | Switch project |
 | `/project-delete <id>` | Delete project |
 
-### Tool
+### Tools
 
-- **arxiv** - Search arXiv.org API with keyword search, date filtering, automatic .tex download
+- **arxiv_search** - Search arXiv.org API for papers (metadata only)
+- **arxiv_download** - Download arXiv papers (.tex source or PDF)
+- **github_search** - Search GitHub repositories
 
 ## Installation
 
