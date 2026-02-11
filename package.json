@@ -23,11 +23,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tsingyuai/scientific.git"
+    "url": "https://github.com/tsingyuai/scientify.git"
   },
-  "homepage": "https://github.com/tsingyuai/scientific#readme",
+  "homepage": "https://github.com/tsingyuai/scientify#readme",
   "bugs": {
-    "url": "https://github.com/tsingyuai/scientific/issues"
+    "url": "https://github.com/tsingyuai/scientify/issues"
   },
   "scripts": {
     "build": "tsc",
