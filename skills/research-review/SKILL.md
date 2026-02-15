@@ -48,7 +48,27 @@ metadata:
 - `$W/project/` — 实际代码
 - `$W/ml_res.md` — 执行结果
 
-### Step 2: 逐项检查
+### Step 2: 提取原子性概念清单
+
+**⚠️ 这是 Novix Judge Agent 的核心机制 — 逐一核对每个原子性学术概念。**
+
+从 `$W/survey_res.md` 的"关键公式汇总"和"核心方法对比"中，提取所有需要在代码中实现的**原子性学术概念**（每个公式、每个核心组件都是一个概念）。
+
+为每个概念记录：
+- 概念名称（如 "Multi-Head Attention", "Contrastive Loss", "Batch Normalization"）
+- 对应公式（LaTeX 格式）
+- 预期代码位置（根据 plan_res.md 推断）
+
+示例清单：
+```
+原子性概念清单（从 survey_res.md 提取）：
+1. Multi-Head Attention — $Attention(Q,K,V) = softmax(\frac{QK^T}{\sqrt{d_k}})V$ — 预期在 model/attention.py
+2. Layer Normalization — $LN(x) = \gamma \frac{x - \mu}{\sigma} + \beta$ — 预期在 model/layers.py
+3. Residual Connection — $y = F(x) + x$ — 预期贯穿所有模型组件
+...
+```
+
+### Step 3: 逐项检查
 
 #### A. 数据集真实性审查
 
@@ -62,7 +82,7 @@ metadata:
 
 | 检查项 | 方法 |
 |--------|------|
-| 模型架构匹配公式 | 逐层对比 survey_res.md 中的核心公式 vs `model/` 实现，检查维度变换、激活函数、注意力机制等关键细节 |
+| **原子性概念逐一核对** | **对照 Step 2 的概念清单，逐个检查**：该概念是否在代码中有对应实现？公式翻译是否正确？维度/参数是否一致？每个概念标注 ✓ 或 ✗ 并记录代码位置 |
 | Loss 函数正确 | 对比 plan Training Plan vs `training/loss.py`，验证数学公式是否正确翻译为代码 |
 | 评估指标正确 | 对比 plan Testing Plan vs `testing/`，确认指标计算逻辑无误 |
 | 关键算法未被简化 | 检查 plan 中的核心创新点是否被完整实现，而非用简化/占位逻辑替代 |
@@ -76,7 +96,7 @@ metadata:
 | Loss 合理 | 非 NaN/Inf，有下降趋势（epoch 1 loss > epoch 2 loss） |
 | 数据管道匹配 plan | 对比 plan Dataset Plan vs `data/` 实现，batch size、预处理步骤一致 |
 
-### Step 3: 写入审查报告
+### Step 4: 写入审查报告
 
 写入 `$W/iterations/judge_v1.md`：
 
@@ -92,8 +112,16 @@ metadata:
 - [x/✗] Data loading code produces correct shape/dtype/count
 - [x/✗] No undeclared mock data
 
-### 算法实现
-- [x/✗] Model architecture matches survey formulas
+### 算法实现 - 原子性概念核对
+
+**逐一核对 Step 2 提取的每个学术概念：**
+
+| 概念 | 公式 | 代码位置 | 结果 | 备注 |
+|------|------|----------|------|------|
+| {概念名} | $...$ | `model/xxx.py:L42` | ✓/✗ | {正确实现/公式错误/缺失/简化为占位符} |
+| ... | ... | ... | ... | ... |
+
+### 算法实现 - 整体检查
 - [x/✗] Loss function correctly implements the math
 - [x/✗] Key algorithm components fully implemented (no simplified placeholders)
 - [x/✗] Evaluation metrics correct
@@ -108,21 +136,27 @@ metadata:
 2. ...
 ```
 
-### Step 4: 迭代（如果 NEEDS_REVISION）
+### Step 5: 迭代（如果 NEEDS_REVISION）
+
+**⚠️ 防偏移机制：每轮迭代都重新读取原始设计文档，确保修改方向正确。**
 
 循环最多 3 次：
 
 1. 读取 `judge_v{N}.md` 的修改建议
-2. 修改 `$W/project/` 中的代码
-3. 重新执行：
+2. **防偏移检查：重新读取** `$W/survey_res.md` 和 `$W/plan_res.md`
+   - 对照原始学术设计目标
+   - 确保修改不是为了"绕过审查"而偏离学术严谨性
+   - 确认修改符合 survey 中的公式定义和 plan 中的设计意图
+3. 修改 `$W/project/` 中的代码
+4. 重新执行：
    ```bash
    cd $W/project && source .venv/bin/activate && python run.py --epochs 2
    ```
-4. 读取执行输出，验证修复
-5. 写入 `judge_v{N+1}.md`
-6. 如果 PASS → 停止；否则继续
+5. 读取执行输出，验证修复
+6. **重新执行 Step 2-4**（提取概念清单 → 逐项检查 → 写报告），写入 `judge_v{N+1}.md`
+7. 如果 PASS → 停止；否则继续
 
-### Step 5: 最终判定
+### Step 6: 最终判定
 
 3 轮后仍 NEEDS_REVISION → 在最后一份 judge 中列出剩余问题，标记 `verdict: BLOCKED`，等待用户介入。
 
@@ -137,3 +171,5 @@ metadata:
 5. **数据集必须验证真实性** —— 实际执行数据加载代码，确认有真实数据（哪怕是小规模）；纯随机 tensor 不算
 6. **执行时间必须与算力匹配** —— 2 epoch 训练时间过短（数据量 >1000 却 <2s）说明数据未加载或训练是空循环
 7. **算法实现必须完整** —— plan 中标注的核心创新点必须逐一检查，不能被简化为 `nn.Linear` 占位
+8. **原子性概念逐一核对（Novix Judge 机制）** —— Step 2 提取的每个概念都必须在 judge 报告的表格中有对应行，标注 ✓ 或 ✗
+9. **防偏移（每轮迭代必须重新对齐）** —— Step 5 每轮修改前必须重新读取 survey_res.md 和 plan_res.md，确保不偏离原始设计目标

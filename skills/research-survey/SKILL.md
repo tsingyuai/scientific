@@ -24,9 +24,12 @@ Read and verify these files exist before starting:
 |------|--------|
 | `$W/papers/_meta/*.json` | /literature-survey |
 | `$W/papers/_downloads/` or `$W/papers/{direction}/` | /literature-survey |
-| `$W/repos/` (optional) | git clone in /literature-survey or manually |
+| `$W/repos/` | /literature-survey Phase 3 |
+| `$W/prepare_res.md` | /literature-survey Phase 3 |
 
-**If any prerequisite is missing, STOP and report:** "需要先运行 /literature-survey 完成论文下载"
+**If papers are missing, STOP:** "需要先运行 /literature-survey 完成论文下载"
+
+**Note:** 如果 `prepare_res.md` 中注明"无可用参考仓库"，代码映射步骤可跳过，但需在 survey_res.md 中标注。
 
 ## Output
 
@@ -67,11 +70,14 @@ ls $W/papers/_meta/
 - **数学公式**：至少 1 个关键公式（保留 LaTeX 格式）
 - **创新点**：与同领域其他方法的区别
 
-#### 2.3 映射到代码（如果 repos/ 存在）
+#### 2.3 映射到参考代码
 
-如果 `$W/repos/` 中有相关仓库：
-- 找到公式对应的代码实现
-- 记录文件路径和行号
+**⚠️ 强制性步骤（当 repos/ 存在时）** — 代码映射是下游 plan 和 implement 的关键输入。
+
+读取 `$W/prepare_res.md` 中的仓库列表，对每个公式/核心概念：
+1. 在对应仓库中搜索实现代码（用 grep 关键类名/函数名）
+2. 记录**文件路径、行号、代码片段**
+3. 如果多个仓库有不同实现，记录差异
 
 #### 2.4 写入笔记
 
@@ -127,7 +133,19 @@ $$
 
 ## 关键公式汇总
 
-{列出所有提取的核心公式}
+**每个公式附带代码映射，供下游 plan 和 implement 参考。**
+
+| 公式名称 | LaTeX | 参考代码 |
+|----------|-------|----------|
+| {name} | $...$ | `repos/{repo}/path.py:L42` |
+| ... | ... | ... |
+
+## 参考代码架构摘要
+
+基于 repos/ 中的参考实现，推荐的代码结构：
+- 数据加载: 参考 `repos/{repo}/data/`
+- 模型实现: 参考 `repos/{repo}/model/`
+- 训练循环: 参考 `repos/{repo}/train.py`
 ```
 
 ---

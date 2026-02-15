@@ -23,7 +23,8 @@ metadata:
 | `$W/task.json` | /research-pipeline or user |
 | `$W/survey_res.md` | /research-survey |
 | `$W/notes/paper_*.md` | /research-survey |
-| `$W/repos/` (optional) | git clone |
+| `$W/repos/` | /literature-survey Phase 3 |
+| `$W/prepare_res.md` | /literature-survey Phase 3 |
 
 **If `survey_res.md` is missing, STOP:** "需要先运行 /research-survey 完成深度分析"
 
@@ -41,10 +42,22 @@ metadata:
 
 读取以下文件，理解研究目标和技术方案：
 - `$W/task.json` — 研究目标
-- `$W/survey_res.md` — 技术路线建议和核心公式
-- 浏览 `$W/repos/` 的目录结构（如有）
+- `$W/survey_res.md` — 技术路线建议、核心公式、**公式→代码映射表**、参考代码架构摘要
+- `$W/prepare_res.md` — 参考仓库列表及关键文件说明
 
-### Step 2: 制定四部分计划
+### Step 2: 参考代码深度分析
+
+**⚠️ 强制性步骤（Novix Plan Agent 机制）** — 读参考仓库的实现细节，确保 plan 有具体可行的依据。
+
+对 `prepare_res.md` 中的重点仓库：
+1. 读取目录结构和 README
+2. 读取核心模型代码，理解架构实现方式
+3. 读取训练脚本，理解超参数选择和训练技巧
+4. 读取数据加载代码，理解预处理流程
+
+为每个组件记录：**参考文件路径 + 关键实现细节**。这些信息将直接填入 plan 的"参考代码"列。
+
+### Step 3: 制定四部分计划
 
 写入 `$W/plan_res.md`：
 
@@ -100,11 +113,12 @@ metadata:
   2. {ablation 2}
 ```
 
-### Step 3: 自检
+### Step 4: 自检
 
 验证计划的完整性：
 - [ ] 每个模型组件都有对应公式
-- [ ] 数据集有具体获取方式
+- [ ] **每个组件的"参考代码"列已填写**（当 repos/ 存在时）
+- [ ] 数据集有具体获取方式（URL 或下载命令）
 - [ ] Loss 函数有数学定义
 - [ ] 评估指标有明确定义
 - [ ] 训练参数合理（不要 lr=0.1 for Adam）
