@@ -61,6 +61,15 @@ ls $W/papers/_meta/
 - **Model Architecture** section
 - 数学公式定义
 
+**对于大型论文**（>2000 行），使用 `paper_browser` 分页阅读：
+```javascript
+// 先读前 100 行找到 section 位置
+paper_browser({ file_path: "$W/papers/{arxiv_id}/{file}.tex", start_line: 1, num_lines: 100 })
+
+// 找到 Method section 后，跳转到该位置
+paper_browser({ file_path: "$W/papers/{arxiv_id}/{file}.tex", start_line: 450, num_lines: 150 })
+```
+
 如果没有 .tex（只有 PDF），基于 abstract 分析。
 
 #### 2.2 提取核心内容

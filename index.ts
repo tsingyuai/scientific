@@ -11,6 +11,7 @@ import {
 import { createArxivSearchTool } from "./src/tools/arxiv-search.js";
 import { createArxivDownloadTool } from "./src/tools/arxiv-download.js";
 import { createGithubSearchTool } from "./src/tools/github-search-tool.js";
+import { createPaperBrowserTool } from "./src/tools/paper-browser.js";
 import { createAutoUpdaterService } from "./src/services/auto-updater.js";
 import { createSkillInjectionHook } from "./src/hooks/inject-skill.js";
 
@@ -22,6 +23,7 @@ export default function register(api: OpenClawPluginApi) {
   api.registerTool(createArxivSearchTool());
   api.registerTool(createArxivDownloadTool());
   api.registerTool(createGithubSearchTool());
+  api.registerTool(createPaperBrowserTool());
 
   // Register auto-updater service (silent updates)
   const pluginConfig = api.pluginConfig as { autoUpdate?: boolean } | undefined;

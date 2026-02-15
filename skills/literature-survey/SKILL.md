@@ -114,11 +114,24 @@ arxiv_download({
 - 核心方法名 + 作者名
 - 论文中提到的数据集名 + 任务名
 
-使用 `web_search` 或 `exec` 调用 GitHub API：
-```bash
-# 示例：
-web_search({ query: "{paper_title} implementation github" })
+使用 `github_search` 工具：
+```javascript
+// 示例：
+github_search({
+  query: "{paper_title} implementation",
+  max_results: 10,
+  sort: "stars",
+  language: "python"  // 可选：根据论文领域选择语言
+})
+
+// 如果有具体方法名：
+github_search({
+  query: "{method_name} {author_last_name}",
+  max_results: 5
+})
 ```
+
+**提示**：如果需要 GitHub API 高频率限制，设置环境变量 `GITHUB_TOKEN`。
 
 #### 3.3 筛选与 clone
 
